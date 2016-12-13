@@ -13,17 +13,19 @@ end
 function Merge!(v0::Vehicle, Count0, C1::Highway1D, vmax::Array{Int64, 1} = [3, 5])
 
     i = v0.position
-    if C1.highway[i].tipo == -1 && C1.highway[i].tipo != 1
+    if C1.highway[i].tipo == -1
+        if (i < C1.N && C1.highway[i+1].tipo != 1) || i == C1.N
 
-        pvbo = Vehicle_Behind(i, C1.highway, C1.N)
-        d_bo = (pvbo < (C1.N) ? (i-pvbo-C1.highway[pvbo].len) : vmax[2] )
-        vb = C1.highway[pvbo].speed
-        if vb <= d_bo
+            pvbo = Vehicle_Behind(i, C1.highway, C1.N)
+            d_bo = (pvbo < (C1.N) ? (i-pvbo-C1.highway[pvbo].len) : vmax[2] )
+            vb = C1.highway[pvbo].speed
+            if vb <= d_bo
 
-            Change_Vehicle!( C1.highway[i], v0.speed, v0.position, v0.tipo, 1, v0.num, v0.len)
-            Empty_Cell!( v0 )
-            Count0 -= 1
-            C1.count += 1
+                Change_Vehicle!( C1.highway[i], v0.speed, v0.position, v0.tipo, 1, v0.num, v0.len)
+                Empty_Cell!( v0 )
+                Count0 -= 1
+                C1.count += 1
+            end
         end
     end
 end

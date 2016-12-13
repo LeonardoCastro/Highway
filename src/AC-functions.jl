@@ -62,7 +62,7 @@ function DecelerationMove(C::Highway1D)
                                     , C.highway[i].num, C.highway[i].len)
 
                 Empty_Cell!(C.highway[i])
-            elseif next_pos <= C.N && C.highway[next_pos].tipo == -2
+            elseif next_pos <= C.N && C.highway[next_pos].tipo == -2 && next_pos > 0
                 while C.highway[next_pos].tipo == -2
                    next_pos -= 1
                 end
