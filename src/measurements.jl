@@ -1,19 +1,82 @@
-function add_simple!(array_speed, array_flux, array_density, i, t, T)
-
-    v = ( array_density[i, t] != 0 ? array_flux[i, t]/array_density[i, t] : 0 )
-    array_speed[i, t] += v/T
+function Measure_Densities!(f, v, d, A, Lanes, S, N, flux, speeds)
+	for a = 1:A, k = 1:Lanes, s = 1:S
+		f[s, k, a] += flux[s, k, a]/N
+		v[s, k, a] += speeds[s, k, a]/N
+		if speeds[s, k, a] != 0
+			d[s, k, a] += flux[s, k, a]/(N*speeds[s, k, a])
+		end
+	end
 end
 
-function add_Frequencies!(array2, v, i, t, j, x_section, T; tipo::Int64 = 2)
+function Measure_Fluxes!(highway, t, sections, T, flux_local0, flux_local1, flux_local2)
+
+    for (i, section) in enumerate(sections)
+      for j = section+4:-1:section
+            add_Fluxes!(flux_local0, highway[j], i, t, j, section, T, tipo=0)
+            add_Fluxes!(flux_local1, highway[j], i, t, j, section, T, tipo=1)
+            add_Fluxes!(flux_local2, highway[j], i, t, j, section, T)
+      end
+    end
+end
+
+function Measure_Speeds!(highway, t, sections, T, speed_local0, speed_local1, speed_local2)
+
+    for (i, section) in enumerate(sections)
+      for j = section+4:-1:section
+            add_Speeds!(speed_local0, highway[j], i, t, j, section, tipo = 0)
+            add_Speeds!(speed_local1, highway[j], i, t, j, section, tipo = 1)
+            add_Speeds!(speed_local2, highway[j], i, t, j, section)
+      end
+    end
+end
+
+
+function add_Fluxes!(array2, v, i, t, j, x_section, T; tipo::Int64 = 2)
 
   if v.speed > 0
     if j-v.speed < x_section
-      if v.tipo == tipo
+	## discriminative count
+      if tipo != 0 && v.tipo == tipo
+        array2[i, t] += 1/T
+      end
+
+	## tipo == 0 to count vehicles no matter the kind
+      if tipo == 0
         array2[i, t] += 1/T
       end
     end
   end
 end
+
+function add_Speeds!(array, v, i, t, j, x_section; tipo::Int64 = 2)
+	if v.tipo > 0 && v.speed > 0
+		if j-v.speed < x_section
+			## discriminative count
+      if tipo != 0 && v.tipo == tipo
+				push!(array[i, t], v.speed)
+      end
+
+			## tipo == 0 to count vehicles no matter the kind
+      if tipo == 0
+				push!(array[i, t], v.speed)
+      end
+		end
+	end
+end
+
+function writing_Arrays!(Lanes, S, num_j, array0, array1, array2, D_array0, D_array1, D_array2, a0, a1, a2)
+	for k = 1:Lanes, s = 1:S
+		array0[s, k, num_j] = round(mean(Float64[x for x in a0[s, k, 1:end-1]]), 2)
+		array1[s, k, num_j] = round(mean(Float64[x for x in a1[s, k, 1:end-1]]), 2)
+		array2[s, k, num_j] = round(mean(Float64[x for x in a2[s, k, 1:end-1]]), 2)
+
+		D_array0[s, k, num_j] = round(std(Float64[x for x in a0[s, k, 1:end-1]]), 2)
+		D_array1[s, k, num_j] = round(std(Float64[x for x in a1[s, k, 1:end-1]]), 2)
+		D_array2[s, k, num_j] = round(std(Float64[x for x in a2[s, k, 1:end-1]]), 2)
+	end
+end
+
+#################################### Mediciones ######################################
 
 function add!(i, j, t, x_section, v, array, array1, array2, T)
 
@@ -31,22 +94,12 @@ function add!(i, j, t, x_section, v, array, array1, array2, T)
     end
 end
 
-function Measure_Frequencies!(highway, t, sections, T, flux_local2, density_local2, flux_local1, Transition_Diagram, j_in)
 
-    for (i, section) in enumerate(sections)
-      for j = section+4:-1:section
-            add_Frequencies!(flux_local2, highway[j], i, t, j, section, T)
-            add_Frequencies!(density_local2, highway[j], i, t, j, section, T*highway[j].speed)
-            add_Frequencies!(flux_local1, highway[j], i, t, j, section, T, tipo=1)
+function add_simple!(array_speed, array_flux, array_density, i, t, T)
 
-            if highway[j].speed == 0 && (highway[j].tipo == 1 || highway[j].tipo == 2 )
-                    Transition_Diagram[i, j_in] = 0
-            end
-      end
-    end
+    v = ( array_density[i, t] != 0 ? array_flux[i, t]/array_density[i, t] : 0 )
+    array_speed[i, t] += v/T
 end
-
-#################################### Mediciones ######################################
 
 function Measure!(C, t, sections, T, flux_local, density_local ,
                speed_local_average, flux_local1, density_local1 ,speed_local_average1,
