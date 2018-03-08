@@ -36,16 +36,16 @@ function Merge_Left_Right!(Ck, Ckminus1, k)
     for v in Ck.highway[end:-1:9]
         if (v.tipo == 1 || v.tipo == 2) && v.change == 0
 
-            delta = v.tipo == 2 ? Int8(3) : Int8(1)
+            delta = (v.tipo == 2 ? Int8(3) : Int8(3))
             l = v.speed
             dfo = safe_distance(v.position, Ckminus1.highway, Ckminus1.N, delta)
             dfs = safe_distance(v.position, Ck.highway, Ck.N, delta)
 
-            if v.tipo == 2 && dfo >= l*delta && (dfs  >= delta*l || l > dfs)
+            if v.tipo == 2 && dfo >= l*delta && (dfs >= delta*l || l > dfs)
                 Merge!(v, Ck.count, Ckminus1)
             end
 
-            if v.tipo == 1 && dfo >= l*delta #(dfs  >= delta*l || l > dfs)
+            if v.tipo == 1 && dfo >= l*delta && (dfs  >= delta*l || l > dfs)
                 Merge!(v, Ck.count, Ckminus1)
             end
             l = dfo = dfs = delta = 0
@@ -57,8 +57,8 @@ end
 function Merge_Right_Left!(Ck, Ckplus1, k)
 
     for v in Ck.highway[end:-1:9]
-        #if (v.tipo == 2 || (v.tipo == 1 && k < 2)) && v.cambio == 0
-        if v.tipo == 2 && v.change == 0
+        if (v.tipo == 2 || v.tipo == 1) && v.change == 0 #(v.tipo == 1 && k < 2)
+        #if v.tipo == 2 && v.change == 0
             l = v.speed
             dfs = safe_distance(v.position, Ck.highway, Ck.N, Int8(1))
 

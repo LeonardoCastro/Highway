@@ -12,9 +12,11 @@ function Measure_Fluxes!(highway, t, sections, T, flux_local0, flux_local1, flux
 
     for (i, section) in enumerate(sections)
       for j = section+4:-1:section
+				if highway[j].speed > 0
             add_Fluxes!(flux_local0, highway[j], i, t, j, section, T, tipo=0)
             add_Fluxes!(flux_local1, highway[j], i, t, j, section, T, tipo=1)
             add_Fluxes!(flux_local2, highway[j], i, t, j, section, T)
+					end
       end
     end
 end
@@ -23,44 +25,42 @@ function Measure_Speeds!(highway, t, sections, T, speed_local0, speed_local1, sp
 
     for (i, section) in enumerate(sections)
       for j = section+4:-1:section
+				if highway[j].speed > 0
             add_Speeds!(speed_local0, highway[j], i, t, j, section, tipo = 0)
             add_Speeds!(speed_local1, highway[j], i, t, j, section, tipo = 1)
             add_Speeds!(speed_local2, highway[j], i, t, j, section)
+					end
       end
     end
 end
 
 
 function add_Fluxes!(array2, v, i, t, j, x_section, T; tipo::Int64 = 2)
+  if j-v.speed < x_section
+## discriminative count
+    if tipo != 0 && v.tipo == tipo
+      array2[i, t] += 1/T
+    end
 
-  if v.speed > 0
-    if j-v.speed < x_section
-	## discriminative count
-      if tipo != 0 && v.tipo == tipo
-        array2[i, t] += 1/T
-      end
-
-	## tipo == 0 to count vehicles no matter the kind
-      if tipo == 0
-        array2[i, t] += 1/T
-      end
+## tipo == 0 to count vehicles no matter the kind
+    if tipo == 0
+      array2[i, t] += 1/T
     end
   end
 end
 
 function add_Speeds!(array, v, i, t, j, x_section; tipo::Int64 = 2)
-	if v.tipo > 0 && v.speed > 0
-		if j-v.speed < x_section
-			## discriminative count
-      if tipo != 0 && v.tipo == tipo
-				push!(array[i, t], v.speed)
-      end
 
-			## tipo == 0 to count vehicles no matter the kind
-      if tipo == 0
-				push!(array[i, t], v.speed)
-      end
-		end
+	if j-v.speed < x_section
+		## discriminative count
+    if tipo != 0 && v.tipo == tipo
+			push!(array[i, t], v.speed)
+    end
+
+		## tipo == 0 to count vehicles no matter the kind
+    if tipo == 0
+			push!(array[i, t], v.speed)
+    end
 	end
 end
 

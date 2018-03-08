@@ -94,6 +94,7 @@ function AccelerationNoiseS1(highway, vmax::Array{Int8, 1} = Int8[3, 5], R::Floa
             if v.speed != -1
               #Curves zone
                 if (v.position < 349) || ( v.position > 620 && v.position < 663)
+                  vmax[1] = Int8(4)
                 end
                 Change_Vehicle!(v, min(v.speed+1, vmax[v.tipo]), v.position, v.tipo, v.change, v.num, v.len)
 
