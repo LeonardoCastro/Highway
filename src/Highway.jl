@@ -16,7 +16,8 @@ export
         Sense1, Sense2, S1_in_ramp, S2_in_ramp, S1_out_ramp, S2_out_ramp, Sections1, Sections2, S1_P_camion_s1, S1_P_camion_s2,
         S1_in_ramp_ampli, S2_in_ramp_ampli, Sections1_CR, Sections2_CR,
         Measure_Frequencies!, add_Frequencies!, P_ramp_S1, P_ramp_S2, P_ampli_S1, P_ampli_S2,
-        Measure_Fluxes!, Measure_Speeds!, add_Fluxes!, add_Speeds!, writing_Arrays!, Measure_Densities!
+        Measure_Fluxes!, Measure_Speeds!, add_Fluxes!, add_Speeds!, writing_Arrays!, Measure_Densities!,
+        S1_ramp
 
 include("types.jl")
 include("aux-functions.jl")

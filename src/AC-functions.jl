@@ -45,7 +45,7 @@ function DecelerationMove(C::Highway1D)
         #Vehicle i is moved
 
         next_pos = C.highway[i].speed + C.highway[i].position
-        if C.highway[i].position != next_pos #&& C.carretera[pos_sig].tipo == -1
+        if C.highway[i].position != next_pos  && next_pos > 0 #&& C.carretera[pos_sig].tipo == -1
 
             if next_pos > C.N
                 Empty_Cell!(C.highway[i])
@@ -63,7 +63,7 @@ function DecelerationMove(C::Highway1D)
 
                 Empty_Cell!(C.highway[i])
             elseif next_pos <= C.N && C.highway[next_pos].tipo == -2 && next_pos > 0
-                while C.highway[next_pos].tipo == -2
+                while C.highway[next_pos].tipo == -2 && next_pos > 1
                    next_pos -= 1
                 end
                Change_Vehicle!(C.highway[next_pos], C.highway[i].speed, next_pos, C.highway[i].tipo, 0,
@@ -94,7 +94,7 @@ function AccelerationNoiseS1(highway, vmax::Array{Int8, 1} = Int8[3, 5], R::Floa
             if v.speed != -1
               #Curves zone
                 if (v.position < 349) || ( v.position > 620 && v.position < 663)
-                  vmax[1] = Int8(4)
+                  vmax[2] = Int8(4)
                 end
                 Change_Vehicle!(v, min(v.speed+1, vmax[v.tipo]), v.position, v.tipo, v.change, v.num, v.len)
 

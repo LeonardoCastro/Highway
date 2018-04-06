@@ -34,11 +34,11 @@ function Insert_Vehicle!(highway, num::Int64, p::Float64, vmax::Array{Int8, 1} =
     v_new = ( rand() <= p ? vmax[1] : vmax[2] )
     length_new = (v_new == vmax[1] ? Len[1] : Len[2])
 
-    while highway[lim].tipo == -1 && highway[lim-length_new+1] == -1 && lim < (left_boundary+vmax[2])
+    while highway[lim].tipo == -1 && highway[lim-length_new+Int8(1)].tipo == -1 && lim < (left_boundary+vmax[2])
         lim += Int8(1)
     end
 
-    pos_new = min( lim - vmax[2], v_new)
+    pos_new = min( lim - v_new, v_new)
 
     if highway[pos_new + 1].tipo != 1
       if pos_new > 1 && v_new == vmax[1] && highway[pos_new-1].tipo == -1

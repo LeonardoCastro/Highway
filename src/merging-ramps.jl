@@ -57,7 +57,7 @@ end
 function Merge_Right_Left!(Ck, Ckplus1, k)
 
     for v in Ck.highway[end:-1:9]
-        if (v.tipo == 2 || v.tipo == 1) && v.change == 0 #(v.tipo == 1 && k < 2)
+        if (v.tipo == 2 || (v.tipo == 1 && k<3) ) && v.change == 0 #(v.tipo == 1 && k < 2)
         #if v.tipo == 2 && v.change == 0
             l = v.speed
             dfs = safe_distance(v.position, Ck.highway, Ck.N, Int8(1))
