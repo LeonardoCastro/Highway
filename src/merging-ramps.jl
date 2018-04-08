@@ -3,7 +3,8 @@ function safe_distance(i, Highway1, N, delta, alfa::Array{Float64, 1} = Float64[
 
     pvfo = Vehicle_Ahead(i, Highway1, N)
     d_ifo = (pvfo < N ? (pvfo-i-Highway1[pvfo].len) : delta*5 ) # 5 = vmax[2]
-    dfo = d_ifo + Int8( floor( (1.-alfa[2]) * Highway1[pvfo].speed + 0.5) )
+    tipo = ( Highway1[i].tipo == 1 ? 1 : 2)
+    dfo = d_ifo + Int8( floor( (1.-alfa[tipo]) * Highway1[pvfo].speed + 0.5) )
     alfa = pvfo = d_ifo = 0
     return dfo
 end
@@ -36,7 +37,7 @@ function Merge_Left_Right!(Ck, Ckminus1, k)
     for v in Ck.highway[end:-1:9]
         if (v.tipo == 1 || v.tipo == 2) && v.change == 0
 
-            delta = (v.tipo == 2 ? Int8(3) : Int8(3))
+            delta = (v.tipo == 2 ? Int8(3) : Int8(1))
             l = v.speed
             dfo = safe_distance(v.position, Ckminus1.highway, Ckminus1.N, delta)
             dfs = safe_distance(v.position, Ck.highway, Ck.N, delta)
@@ -119,7 +120,7 @@ function Ramp!(x0, lramp, p2, p1, Ck, num, vmax::Array{Int8, 1} = Int8[2, 2], Le
   end
   ############# Exit            #################
   if p2 < 0
-     x = Pos_right(Ck.highway[x0:x0+lramp])
+     x = Pos_right(Ck.highway[x0:x0+lramp], Int8(2))
      if x <= x0+lramp && Ck.highway[x].tipo == 2 && rand() < -p2
          if Ck.count > 0
              Ck.count -= 1
@@ -140,8 +141,8 @@ function Ramp!(x0, lramp, p2, p1, Ck, num, vmax::Array{Int8, 1} = Int8[2, 2], Le
   end
     ############# Exit            #################
   if p1 < 0
-    x = Pos_right(Ck.highway[x0:x0+lramp])
-    if x <= x0+lramp && rand() < -p1
+    x = Pos_right(Ck.highway[x0:x0+lramp], Int8(1))
+    if x <= x0+lramp && Ck.highway[x].tipo == 1 && rand() < -p1
         if Ck.count > 0
             Ck.count -= 1
         end

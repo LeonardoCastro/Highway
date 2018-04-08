@@ -23,8 +23,9 @@ S1_in_ramp_ampli = [(10, 20), (2500, 20), (2958, 6), (3158, 3)]
 
 S1_ramp = [(371, 38), (557, 3), (1015, 31), (1512, 100),
            (1628, 15), (1791, 10), (2158, 7), (2358, 20),
-           (2958, 6), (3115, 10)]
-S1_in_ramp_ampli = [(2958, 6), (3115, 10)]
+           (2580, 10), (2958, 6), (3115, 10)]
+S1_ramp_ampli = [(371, 38), (2358, 20), (2580, 10),
+                 (2958, 6), (3115, 10)]
 
 #(p2, p1)
 P_ramp_S1 = [
@@ -39,7 +40,7 @@ P_ramp_S1 = [
                 (0.056,	0.007),    # Entrada después de Plan de Ayala
                 (-0.053,	-0.007), # Salida antes de Tabachines
                 (-0.144,	-0.019), # Salida de Morelos
-                #(-0.332,	-0.014), #
+                (-0.332,	-0.014), # Salida carretera libre
                 (0.036,	-0.003),   # Entrada de Burgos
                 #(0.01,	0.008),    # Calle entre Burgos y Brisas
                 (-0.101,	-0.02)   # Salida de Brisas
@@ -62,11 +63,15 @@ P_ramp_S1 = [
 
 P_ampli_S1 = [
 #################  12 hours
-                (0.445,	0.056)
+              (0.445,	0.056),    # Flujo inicial
+              (0.378,	0.022),    # Entrada de Paloma
                 #(0.,	0.001)
-                (0.237,	0.018)
-                (0.01,	0.008)
-                (-0.101,	-0.02)
+                #(0.237,	0.018)
+                #(0.01,	0.008)
+              (0.155, 0.013),    # Antes del puente
+              (-0.332,	-0.014), # Salida carretera libre (después del punte)
+              (0.036,	-0.003),   # Entrada de Burgos
+              (-0.101,	-0.02)   #Salida de Brisas
 
 #################  8 hours
 #                (0.660763888888889,	0.077425),

@@ -31,24 +31,43 @@ function Insert_Vehicle!(highway, num::Int64, p::Float64, vmax::Array{Int8, 1} =
 
     lim = left_boundary + Int8(1)
 
-    v_new = ( rand() <= p ? vmax[1] : vmax[2] )
-    length_new = (v_new == vmax[1] ? Len[1] : Len[2])
-
-    while highway[lim].tipo == -1 && highway[lim-length_new+Int8(1)].tipo == -1 && lim < (left_boundary+vmax[2])
+    while highway[lim].tipo == -1 && highway[lim+Int8(1)].tipo != 1 && lim < (left_boundary+vmax[2])
         lim += Int8(1)
     end
+
+    v_new = ( rand() <= p ? vmax[1] : vmax[2] )
+    length_new = (v_new == vmax[1] ? Len[1] : Len[2])
+    tipo = (v_new == vmax[1] ? 1 : 2)
 
     pos_new = min( lim - v_new, v_new)
 
     if highway[pos_new + 1].tipo != 1
-      if pos_new > 1 && v_new == vmax[1] && highway[pos_new-1].tipo == -1
-        tipo = 1
+      if tipo == 2
         Change_Vehicle!(highway[pos_new], v_new, pos_new, tipo, 1, num, Int64(length_new))
       end
 
-      if (pos_new == 1 && v_new == vmax[1]) || v_new == vmax[2]
-        tipo = (v_new == vmax[1] ? 1 : 2 )
-        Change_Vehicle!(highway[pos_new], v_new, pos_new, tipo, 1, num, Int64(length_new))
+      if tipo == 1
+        if highway[pos_new-1] == -1
+          Change_Vehicle!(highway[pos_new], v_new, pos_new, tipo, 1, num, Int64(length_new))
+        else # If there is no place, find one
+          pos_new = Int8(6)
+          found = false
+          while pos_new > 1 && !found
+            if highway[pos_new].tipo == -1 && highway[pos_new-1].tipo == -1 && highway[pos_new+1].tipo != 1
+              found = true
+            else
+              pos_new -= Int8(1)
+            end
+          end
+          if found
+            Change_Vehicle!(highway[pos_new], v_new, pos_new, tipo, 1, num, Int64(length_new))
+          end
+          if !found && pos_new == Int8(1)
+            if highway[pos_new].tipo == -1 && highway[pos_new+1].tipo != 1
+              Change_Vehicle!(highway[pos_new], v_new, pos_new, tipo, 1, num, Int64(length_new))
+            end
+          end
+        end
       end
     end
     lim = v_new = pos_new = tipo = left_boundary = vmax = length_new = 0
@@ -105,12 +124,20 @@ function Pos_left9(highway)
 end
 
 ## Function giving the position of the vehicle closest to the begining of the highway
-function Pos_right(highway)
+function Pos_right(highway, tipo::Int8 = Int8(0))
     x = highway[1].position
     i = 1
-    while x < highway[end].position && (highway[i].tipo == -1 ||highway[i].tipo == -2)
-        x += 1
-        i += 1
+
+    if tipo == 0
+      while x < highway[end].position && (highway[i].tipo == -1 ||highway[i].tipo == -2)
+          x += 1
+          i += 1
+      end
+    else
+      while x < highway[end].position && highway[i].tipo != tipo
+          x += 1
+          i += 1
+      end
     end
     x
     #if highway[x].tipo == 1

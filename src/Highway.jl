@@ -17,7 +17,7 @@ export
         S1_in_ramp_ampli, S2_in_ramp_ampli, Sections1_CR, Sections2_CR,
         Measure_Frequencies!, add_Frequencies!, P_ramp_S1, P_ramp_S2, P_ampli_S1, P_ampli_S2,
         Measure_Fluxes!, Measure_Speeds!, add_Fluxes!, add_Speeds!, writing_Arrays!, Measure_Densities!,
-        S1_ramp
+        S1_ramp, S1_ramp_ampli 
 
 include("types.jl")
 include("aux-functions.jl")

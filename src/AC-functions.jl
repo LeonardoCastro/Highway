@@ -34,6 +34,7 @@ function DecelerationMove(C::Highway1D)
         if i_1 != 0
         ############################ change ###################################
           distance = i - i_1 - C.highway[i].len
+          distance = (distance < 1 ? 0 : distance)
 
           #The vehicle i-1 deaccelarate with respect to vehicle i
           estimated_speed = round(Int8, floor( C.highway[i].speed * (1.0 - alfa[C.highway[i].tipo]) + 0.5 ) )
@@ -121,7 +122,7 @@ function AccelerationNoiseS2(highway, vmax::Array{Int8, 1} = Int8[3, 5], R::Floa
         if v.tipo == 1 || v.tipo == 2
 
             #Acceleration
-            if v.speed != -1
+            #if v.speed != -1
               #Curves zone
                 if (v.position > 3518) || ( v.position < 3408 && v.position > 3265)
                     vmax[2] = Int8(4)
@@ -132,7 +133,7 @@ function AccelerationNoiseS2(highway, vmax::Array{Int8, 1} = Int8[3, 5], R::Floa
                     vmax[1] = Int8(2)
                 end
                 Change_Vehicle!(v, min(v.speed+1, vmax[v.tipo]), v.position, v.tipo, v.change, v.num, v.len)
-            end
+            #end
 
             #Noise
             if v.speed > 0
