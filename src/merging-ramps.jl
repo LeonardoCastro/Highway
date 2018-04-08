@@ -112,20 +112,38 @@ function Ramp!(x0, lramp, p2, p1, Ck, num, vmax::Array{Int8, 1} = Int8[2, 2], Le
 
   ############# Entrance           #################
   if p2 > 0
-    x = Pos_next(Ck.highway[x0:x0+lramp])
-    if x <= x0+lramp && Ck.highway[x+1].tipo != 1 && rand() < p2
-      Ck.count += 1
-      Change_Vehicle!( Ck.highway[x], vmax[2], x, 2, 1, num, Len[2])
+    if rand() < p2
+      intro = false
+      x_end = x0+lramp
+      x = Pos_next(Ck.highway[x0:x_end])
+      while !intro && x >= x0
+        if Ck.highway[x+1].tipo != 1
+          Ck.count += 1
+          Change_Vehicle!( Ck.highway[x], vmax[2], x, 2, 1, num, Len[2])
+          intro = true
+        else
+          x_end = x-1
+          x = Pos_next(Ck.highway[x0:x_end])
+        end
+      end
     end
   end
   ############# Exit            #################
   if p2 < 0
-     x = Pos_right(Ck.highway[x0:x0+lramp], Int8(2))
-     if x <= x0+lramp && Ck.highway[x].tipo == 2 && rand() < -p2
-         if Ck.count > 0
-             Ck.count -= 1
+     if rand() < -p2
+       out = false
+       x_end = x0+lramp
+       x = Pos_right(Ck.highway[x0:x_end], Int8(2))
+       while !out && x >= x0
+         if Ck.highway[x].tipo == 2
+           Ck.count -= 1
+           Empty_Cell!(Ck.highway[x])
+           out = true
+         else
+           x_end = x-1
+           x = Pos_right(Ck.highway[x0:x_end], Int8(2))
          end
-         Empty_Cell!(Ck.highway[x])
+       end
      end
    end
 
@@ -133,20 +151,38 @@ function Ramp!(x0, lramp, p2, p1, Ck, num, vmax::Array{Int8, 1} = Int8[2, 2], Le
 
   ############# Entrance         #################
   if p1 > 0
-    x = Pos_next(Ck.highway[x0:x0+lramp])
-    if x <= x0+lramp && Ck.highway[x+1].tipo != 1 && Ck.highway[x-1].tipo == -1 && rand() < p1
-      Ck.count += 1
-      Change_Vehicle!(Ck.highway[x], vmax[1], x, 1, 1, num, Len[1])
+    if rand() < p1
+      intro = false
+      x_end = x0+lramp
+      x = Pos_next(Ck.highway[x0:x_end])
+      while !intro && x >= x0
+        if Ck.highway[x+1].tipo != 1 && Ck.highway[x-1].tipo == -1
+          Ck.count += 1
+          Change_Vehicle!(Ck.highway[x], vmax[1], x, 1, 1, num, Len[1])
+          intro = true
+        else
+          x_end = x-1
+          x = Pos_next(Ck.highway[x0:x_end])
+        end
+      end
     end
   end
     ############# Exit            #################
   if p1 < 0
-    x = Pos_right(Ck.highway[x0:x0+lramp], Int8(1))
-    if x <= x0+lramp && Ck.highway[x].tipo == 1 && rand() < -p1
-        if Ck.count > 0
-            Ck.count -= 1
+    if rand() < -p1
+      out = false
+      x_end = x0+lramp
+      x = Pos_right(Ck.highway[x0:x_end], Int8(1))
+      while !out && x >= x0
+        if Ck.highway[x].tipo == 1
+          Ck.count -= 1
+          Empty_Cell!(Ck.highway[x])
+          out = true
+        else
+          x_end = x-1
+          x = Pos_right(Ck.highway[x0:x_end], Int8(2))
         end
-        Empty_Cell!(Ck.highway[x])
+      end
     end
   end
 end
