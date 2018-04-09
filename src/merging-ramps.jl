@@ -116,7 +116,7 @@ function Ramp!(x0, lramp, p2, p1, Ck, num, vmax::Array{Int8, 1} = Int8[2, 2], Le
       intro = false
       x_end = x0+lramp
       x = Pos_next(Ck.highway[x0:x_end])
-      while !intro && x >= x0
+      while !intro && x > x0
         if Ck.highway[x+1].tipo != 1
           Ck.count += 1
           Change_Vehicle!( Ck.highway[x], vmax[2], x, 2, 1, num, Len[2])
@@ -134,7 +134,7 @@ function Ramp!(x0, lramp, p2, p1, Ck, num, vmax::Array{Int8, 1} = Int8[2, 2], Le
        out = false
        x_end = x0+lramp
        x = Pos_right(Ck.highway[x0:x_end], Int8(2))
-       while !out && x >= x0
+       while !out && x > x0
          if Ck.highway[x].tipo == 2
            Ck.count -= 1
            Empty_Cell!(Ck.highway[x])
@@ -155,7 +155,7 @@ function Ramp!(x0, lramp, p2, p1, Ck, num, vmax::Array{Int8, 1} = Int8[2, 2], Le
       intro = false
       x_end = x0+lramp
       x = Pos_next(Ck.highway[x0:x_end])
-      while !intro && x >= x0
+      while !intro && x > x0
         if Ck.highway[x+1].tipo != 1 && Ck.highway[x-1].tipo == -1
           Ck.count += 1
           Change_Vehicle!(Ck.highway[x], vmax[1], x, 1, 1, num, Len[1])
@@ -173,7 +173,7 @@ function Ramp!(x0, lramp, p2, p1, Ck, num, vmax::Array{Int8, 1} = Int8[2, 2], Le
       out = false
       x_end = x0+lramp
       x = Pos_right(Ck.highway[x0:x_end], Int8(1))
-      while !out && x >= x0
+      while !out && x > x0
         if Ck.highway[x].tipo == 1
           Ck.count -= 1
           Empty_Cell!(Ck.highway[x])
