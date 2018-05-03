@@ -42,12 +42,19 @@ function Merge_Left_Right!(Ck, Ckminus1, k)
             dfo = safe_distance(v.position, Ckminus1.highway, Ckminus1.N, delta)
             dfs = safe_distance(v.position, Ck.highway, Ck.N, delta)
 
+
+
             if v.tipo == 2 && dfo >= l*delta && (dfs >= delta*l || l > dfs)
                 Merge!(v, Ck.count, Ckminus1)
             end
 
-            if v.tipo == 1 && dfo >= l*delta && (dfs  >= delta*l || l > dfs)
-                Merge!(v, Ck.count, Ckminus1)
+            if v.tipo == 1 #&& dfo >= l*delta && (dfs  >= delta*l || l > dfs)
+                pos_behind = Vehicle_Behind(v.position, Ck.highway, Ck.N)
+                sfd_b = safe_distance(pos_behind, Ck.highway, Ck.N, delta)
+
+                if (dfs  >= delta*l || l > dfs || Ck.highway[pos_behind].speed > sfd_b) && dfo >= l*delta
+                    Merge!(v, Ck.count, Ckminus1)
+                end
             end
             l = dfo = dfs = delta = 0
         end
@@ -55,10 +62,10 @@ function Merge_Left_Right!(Ck, Ckminus1, k)
 end
 
 ## Esta función hace los cambios de carril desde un carril derecho hacia uno izquierdo
-function Merge_Right_Left!(Ck, Ckplus1, k)
+function Merge_Right_Left!(Ck, Ckplus1, k, kmax::Int64 = 3)
 
     for v in Ck.highway[end:-1:9]
-        if (v.tipo == 2 || (v.tipo == 1 && k<3) ) && v.change == 0 #(v.tipo == 1 && k < 2)
+        if (v.tipo == 2 || (v.tipo == 1 && k<kmax) ) && v.change == 0 #(v.tipo == 1 && k < 2)
         #if v.tipo == 2 && v.change == 0
             l = v.speed
             dfs = safe_distance(v.position, Ck.highway, Ck.N, Int8(1))
@@ -75,6 +82,8 @@ function Merge_Right_Left!(Ck, Ckplus1, k)
         end
     end
 end
+
+
 
 ## Esta función simula una rampa de entrada (tipo == 1) o de salida (tipo == 0)
 function Rampa!( tipo, x0, lramp, pin, p, Ck, num, vmax::Array{Int8, 1} = Int8[3, 5])
@@ -106,7 +115,7 @@ function Rampa!( tipo, x0, lramp, pin, p, Ck, num, vmax::Array{Int8, 1} = Int8[3
     x = 0
 end
 
-function Ramp!(x0, lramp, p2, p1, Ck, num, vmax::Array{Int8, 1} = Int8[2, 2], Len::Array{Int64, 1} = Int64[2, 1])
+function Ramp!(x0, lramp, p2, p1, Ck, num, vmax::Array{Int8, 1} = Int8[3, 5], Len::Array{Int64, 1} = Int64[2, 1])
 
   ############# Ramp light vehicles #################
 
