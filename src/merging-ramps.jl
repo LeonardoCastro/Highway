@@ -115,7 +115,7 @@ function Rampa!( tipo, x0, lramp, pin, p, Ck, num, vmax::Array{Int8, 1} = Int8[3
     x = 0
 end
 
-function Ramp!(x0, lramp, p2, p1, Ck, num, vmax::Array{Int8, 1} = Int8[3, 5], Len::Array{Int64, 1} = Int64[2, 1])
+function Ramp!(x0, lramp, p2, p1, Ck, num, vmax::Array{Int8, 1} = Int8[2, 2], Len::Array{Int64, 1} = Int64[2, 1])
 
   ############# Ramp light vehicles #################
 
