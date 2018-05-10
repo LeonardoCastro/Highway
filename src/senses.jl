@@ -72,7 +72,7 @@ P_ampli_S1 = [
               (-0.332,	-0.014), # Salida carretera libre (después del punte)
               (0.036,	-0.003),   # Entrada de Burgos
               (-0.101,	-0.02)   #Salida de Brisas
-
+              ]
 
 ############################################################## Sentido 2: Acapulco-México ##########################################################
 
