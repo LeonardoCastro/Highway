@@ -56,8 +56,20 @@ end
 
 function Measure_Densities!(mean_density, D_mean_density, mean_speed, D_mean_speed, mean_flux, D_mean_flux)
 
-	mean_density = mean_flux./mean_speed
-	D_mean_density = (D_mean_flux.*mean_speed - mean_flux.*D_mean_speed)./(mean_speed.^2)
+  idx_s = find(mean_speed .== 0)
+  idx_f = find(mean_flux .== 0)
+
+  # Normal case
+  mean_density = mean_flux./mean_speed
+  D_mean_density = (D_mean_flux.*mean_speed - mean_flux.*D_mean_speed)./(mean_speed.^2)
+
+  # Vehicles present but no flux case
+  mean_density[idx_s] = 1
+  D_mean_density[idx_s] = 0
+
+  # No vehicles case
+  mean_density[intersect(idx_s, idx_f)] = 0
+  D_mean_density[intersect(idx_s, idx_f)] = 0
 end
 
 function Measure!(Lanes::Int64, S::Int64, N::Int64, A::Int64, mean_speed, mean_flux,
@@ -69,23 +81,21 @@ function Measure!(Lanes::Int64, S::Int64, N::Int64, A::Int64, mean_speed, mean_f
 	# ensamble averaging
 	for t = 1:A, k = 1:Lanes, s = 1:S
 		idx_n = find(view(fluxes, s, k, t, :))
-    mean_speed_n[s, k, t] = mean(speeds[s, k, t, idx_n])
-		if sense == 1
-			mean_flux_n[s, k, t] = mean(fluxes[s, k, t, idx_n])
-		else
-			mean_flux_n[s, k, t] = mean(fluxes[s, k+1, t, idx_n])
-		end
+    mean_speed_n[s, k, t, num_j, num_p] = (length(idx_n) != 0 ? mean(speeds[s, k, t, idx_ns, num_j, num_p]) : 0)
+    K = (sense == 1 ? k : k+1)
+    mean_flux_n[s, k, t, num_j, num_p] = (length(idx_n) != 0 ? mean(fluxes[s, K, t, idx_n, num_j, num_p]) : 0)
 	end
+  K = 0
 
 	# temporal averaging
 	for k = 1:Lanes, s = 1:S
 		idx_t = find(view(mean_flux_n, s, k, :))
 
-		mean_flux[s, k] = mean(mean_flux_n[s, k, idx_t])
-		mean_speed[s, k] = mean(mean_speed_n[s, k, idx_t])
+		mean_flux[s, k] = (length(idx_t) != 0 ? mean(mean_flux_n[s, k, idx_t, num_j, num_p]) : 0)
+		mean_speed[s, k] = (length(idx_t) != 0 ? mean(mean_speed_n[s, k, idx_s, num_j, num_p]) : 0)
 
-		D_mean_flux[s, k] = std(mean_flux_n[s, k, idx_t])
-		D_mean_speed[s, k] = std(mean_speed_n[s, k, idx_t])
+		D_mean_flux[s, k] = (length(idx_t) != 0 ? std(mean_flux_n[s, k, idx_t, num_j, num_p]) : 0)
+		D_mean_speed[s, k] = (length(idx_s) != 0 ? std(mean_speed_n[s, k, idx_s, num_j, num_p]) : 0)
 	end
 	idx_n = idx_t = mean_speed_n = mean_flux_n = 0
 end
