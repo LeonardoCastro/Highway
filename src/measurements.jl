@@ -80,7 +80,7 @@ function Measure!(Lanes::Int64, S::Int64, N::Int64, A::Int64, mean_speed, mean_f
 
 	# ensamble averaging
 	for t = 1:A, k = 1:Lanes, s = 1:S
-		idx_n = find(view(fluxes, s, k, t, :))
+		idx_n = find([f for f in fluxes[s, k, t, :]])
     mean_speed_n[s, k, t] = (length(idx_n) != 0 ? mean(speeds[s, k, t, idx_n]) : 0)
     K = (sense == 1 ? k : k+1)
     mean_flux_n[s, k, t] = (length(idx_n) != 0 ? mean(fluxes[s, K, t, idx_n]) : 0)
@@ -89,7 +89,7 @@ function Measure!(Lanes::Int64, S::Int64, N::Int64, A::Int64, mean_speed, mean_f
 
 	# temporal averaging
 	for k = 1:Lanes, s = 1:S
-		idx_t = find(view(mean_flux_n, s, k, :))
+		idx_t = find([f for f in mean_flux_n[s, k, :]])
 
 		mean_flux[s, k] = (length(idx_t) != 0 ? mean(mean_flux_n[s, k, idx_t]) : 0)
 		mean_speed[s, k] = (length(idx_t) != 0 ? mean(mean_speed_n[s, k, idx_t]) : 0)
