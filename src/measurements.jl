@@ -81,7 +81,7 @@ function Measure!(Lanes::Int64, S::Int64, N::Int64, A::Int64, mean_speed, mean_f
 	# ensamble averaging
 	for t = 1:A, k = 1:Lanes, s = 1:S
     K = (sense == 1 ? k : k+1)
-		idx_n = find([f for f in fluxes[s, k, t, :]])
+		idx_n = find([f for f in fluxes[s, K, t, :]])
     mean_speed_n[s, k, t] = (length(idx_n) != 0 ? mean(speeds[s, k, t, idx_n]) : 0)
     mean_flux_n[s, k, t] = (length(idx_n) != 0 ? mean(fluxes[s, K, t, idx_n]) : 0)
 	end
