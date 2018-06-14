@@ -93,8 +93,8 @@ function Measure!(Lanes::Int64, S::Int64, N::Int64, A::Int64, mean_speed, mean_f
 		mean_flux[s, k] = (length(idx_t) != 0 ? mean(mean_flux_n[s, k, idx_t]) : 0)
 		mean_speed[s, k] = (length(idx_t) != 0 ? mean(mean_speed_n[s, k, idx_t]) : 0)
 
-		D_mean_flux[s, k] = (length(idx_t) != 0 ? std(mean_flux_n[s, k, idx_t]) : 0)
-		D_mean_speed[s, k] = (length(idx_t) != 0 ? std(mean_speed_n[s, k, idx_t]) : 0)
+		D_mean_flux[s, k] = (length(idx_t) > 1 ? std(mean_flux_n[s, k, idx_t]) : 0)
+		D_mean_speed[s, k] = (length(idx_t) > 1 ? std(mean_speed_n[s, k, idx_t]) : 0)
 	end
 	K = idx_n = idx_t = mean_speed_n = mean_flux_n = 0
 end
